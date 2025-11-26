@@ -1,20 +1,30 @@
 import React from "react";
 import { AiToolsData } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "@clerk/clerk-react";
+import { useUser, useClerk } from "@clerk/clerk-react";
 
 const AiTools = () => {
   const navigate = useNavigate();
   const { user } = useUser();
+  const { openSignIn } = useClerk(); // use the same modal function as Navbar
+
+  const handleClick = (path) => {
+    if (user) {
+      navigate(path); // logged in → navigate to tool
+    } else {
+      openSignIn(); // logged out → open Clerk login modal
+    }
+  };
+
   return (
     <div className="px-4 sm:px-20 xl:px-32 my-24">
       <div className="text-center">
         <h1 className="text-slate-700 text-[42px] font-semibold">
-          Powerful AI tools{" "}
+          Powerful AI tools
         </h1>
         <p className="text-gray-500 max-w-lg mx-auto">
-          Everything you need to create , enhance , and optimize your content
-          with cutting-edge AI technology
+          Everything you need to create, enhance, and optimize your content with
+          cutting-edge AI technology
         </p>
       </div>
 
@@ -23,12 +33,12 @@ const AiTools = () => {
           <div
             key={index}
             className="p-8 m-4 max-w-xs rounded-lg bg-[#FDFDFE] shadow-lg border border-gray-100 hover:-translate-y-1 transition-all duration-300 cursor-pointer"
-            onClick={() => user && navigate(tool.path)}
+            onClick={() => handleClick(tool.path)}
           >
             <tool.Icon
               className="w-12 h-12 p-3 text-white rounded-xl"
               style={{
-                background: `linear-gradient(to bottom , ${tool.bg.from}, ${tool.bg.to})`,
+                background: `linear-gradient(to bottom, ${tool.bg.from}, ${tool.bg.to})`,
               }}
             />
             <h3 className="mt-6 mb-3 text-lg font-semibold">{tool.title}</h3>
