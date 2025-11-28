@@ -54,6 +54,7 @@ const RemoveObject = () => {
         className='w-full lg:w-1/2 p-4 bg-white rounded-lg boarder border-gray-200'
       >
         <div className='flex items-center gap-3'>
+          <Scissors className='w-6 text-[#200bc1]' />
           <h1 className='text-xl font-semibold'>Object Removal</h1>
         </div>
 
@@ -62,7 +63,7 @@ const RemoveObject = () => {
         <div className='mt-2 '>
           <label className='cursor-pointer flex items-center justify-center w-full px-4 py-2 text-sm text-black bg-[#e1e0ec] hover:bg-[#aea29f] rounded-md'>
          <Upload className='w-5 text-[#060321]' />
-           <span className='ml-2 text-black font-semibold truncate'>{input ? input.name : 'Pick an image'}</span>
+           <span className='ml-2 text-black font-semibold truncate'>{input ? input.name : 'Choose Image'}</span>
           <input
            type='file'
            accept='image/*'
@@ -107,19 +108,26 @@ const RemoveObject = () => {
           disabled={loading}
           className='w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#5341ca] to-[#01022a] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer'
         >
-          
+          {loading ? (
+            <span className='w-4 h-4 my-1 rounded-full border-2 border-t-transparent animate-spin'></span>
+          ) : (
+            <Scissors className='w-5' />
+          )}
           Remove Object
         </button>
       </form>
 
       <div className='w-full lg:w-1/2 p-4 bg-white rounded-lg flex flex-col border border-gray-200 min-h-96'>
         <div className='flex items-center gap-3'>
-          
-          <h1 className='text-xl font-semibold'>Processed image</h1>
+          <Scissors className='w-5 h-5 text-[#150b57]' />
+          <h1 className='text-xl font-semibold'>Processed Image</h1>
         </div>
         {!content ? (
           <div className='flex-1 flex justify-center items-center'>
-            
+            <div className='text-sm flex flex-col items-center gap-5 text-gray-400'>
+              <Scissors className='w-9 h-9 text-[#0f086e]' />
+              <p>Upload an image and click "Remove Object" to get started</p>
+            </div>
           </div>
         ) : (
           <img src={content} alt='image' className='mt-3 w-full h-full' />
