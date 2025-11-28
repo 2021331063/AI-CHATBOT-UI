@@ -68,7 +68,7 @@ const RemoveBackground = () => {
       >
         <div className='flex items-center gap-3 space-y-6'>
           <Sparkles className='w-6 text-[#783412]' />
-          <h1 className='text-xl font-semibold'>AI Background Removal</h1>
+          <h1 className='text-xl font-semibold'>Background Removal</h1>
         </div>
 
         <p className='mt-6 text-xl font-medium'>Upload Image</p>
@@ -119,7 +119,10 @@ const RemoveBackground = () => {
         </div>
         {!content ? (
           <div className='flex-1 flex justify-center items-center'>
-          
+            /*<div className='text-sm flex flex-col items-center gap-5 text-gray-400'>
+             <Eraser className='w-9 h-9' />
+             <p>Upload an image and click "Remove Background" to get started</p>
+            </div>*/
           </div>
         ) : (
           <img src={content} alt='image' className='mt-3 w-full h-full' />
