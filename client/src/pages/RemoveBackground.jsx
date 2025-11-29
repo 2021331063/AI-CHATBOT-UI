@@ -68,12 +68,12 @@ const RemoveBackground = () => {
       >
         <div className='flex items-center gap-3 space-y-6'>
           <Sparkles className='w-6 text-[#783412]' />
-          <h1 className='text-xl font-semibold'>Background Removal</h1>
+          <h1 className='text-xl font-semibold'>AI Background Removal</h1>
         </div>
 
-        <p className='mt-6 text-xl font-medium'>Upload Image</p>
+        <p className='mt-6 text-xl font-medium'>Pick an Image</p>
 
-        {/* Custom file input */}
+        
         <div className='mt-2 '>
           <label className='cursor-pointer flex items-center justify-center w-full px-4 py-2 text-sm text-red-900 bg-[#ede5e2] hover:bg-[#8b7a75] rounded-md'>
            <Upload className='w-5' />
@@ -121,7 +121,7 @@ const RemoveBackground = () => {
           <div className='flex-1 flex justify-center items-center'>
             /*<div className='text-sm flex flex-col items-center gap-5 text-gray-400'>
              <Eraser className='w-9 h-9' />
-             <p>Upload an image and click "Remove Background" to get started</p>
+             <p>Upload an image and click "Remove Background" to get the image without background</p>
             </div>*/
           </div>
         ) : (
