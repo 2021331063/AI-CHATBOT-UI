@@ -119,10 +119,10 @@ const RemoveBackground = () => {
         </div>
         {!content ? (
           <div className='flex-1 flex justify-center items-center'>
-            /*<div className='text-sm flex flex-col items-center gap-5 text-gray-400'>
+            <div className='text-sm flex flex-col items-center gap-5 text-gray-400'>
              <Eraser className='w-9 h-9' />
              <p>Upload an image and click "Remove Background" to get the image without background</p>
-            </div>*/
+            </div>
           </div>
         ) : (
           <img src={content} alt='image' className='mt-3 w-full h-full' />
