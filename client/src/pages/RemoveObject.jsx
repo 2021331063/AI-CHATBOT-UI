@@ -58,7 +58,7 @@ const RemoveObject = () => {
           <h1 className='text-xl font-semibold'>Object Removal</h1>
         </div>
 
-        <p className='mt-6 text-sm font-medium'>Pick an Image</p>
+        <p className='mt-6 text-sm font-medium'>Upload Image</p>
 
         <div className='mt-2 '>
           <label className='cursor-pointer flex items-center justify-center w-full px-4 py-2 text-sm text-black bg-[#e1e0ec] hover:bg-[#aea29f] rounded-md'>
