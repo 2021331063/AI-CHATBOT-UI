@@ -9,7 +9,7 @@ axios.defaults.baseURL=import.meta.env.VITE_BASE_URL;
 
 
 const BlogTitles = () => {
-const blogCategories =['General' , 'Technology' , 'Business' , 'Health','Lifestyle' , 'Education']
+const blogCategories =['General' , 'Technology' , 'Business' ,'Health','Lifestyle' , 'Education', 'Travel' , 'Food','Digital Marketing', 'Finance & Investment','Sports','History & Culture' ]
 
     const [selectedCategory, setSelectedCategory] = useState('General')
     const [input, setInput] = useState('')
@@ -67,7 +67,7 @@ const blogCategories =['General' , 'Technology' , 'Business' , 'Health','Lifesty
           : <Hash className='w-5'/>
           }
           
-          Generate
+          Generate title
         </button>
       </form>
 
@@ -83,7 +83,7 @@ const blogCategories =['General' , 'Technology' , 'Business' , 'Health','Lifesty
            <div className='flex-1 flex justify-center items-center'>
           <div className='text-sm flex flex-col items-center gap-5 text-gray-400'>
             <Hash className='w-9 h-9 text-[#4A7AFF]'/>
-            <p>Enter a topic and click "Generate" to get the blog</p>
+            <p>Enter a topic and click "Generate title" to get started</p>
           </div>
         </div>
         ):(
