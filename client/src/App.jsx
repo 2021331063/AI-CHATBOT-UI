@@ -12,8 +12,18 @@ import Home from "./pages/Home";
 import RemoveObject from "./pages/RemoveObject";
 import { Toaster } from "react-hot-toast";
 import Chat from "./pages/Chat";
+import { useAuth } from "@clerk/clerk-react";
+import { useEffect } from "react";
+
+
 
 const App = () => {
+
+  const { getToken } = useAuth()
+  useEffect(() => {
+    getToken().then((token) => console.log(token));
+  },[])
+
   return (
     <div>
       <Toaster />
