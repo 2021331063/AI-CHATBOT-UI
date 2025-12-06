@@ -1,5 +1,17 @@
 {
   "dependencies": {
-    "@clerk/clerk-react": "^5.57.0"
+    "@clerk/clerk-react": "^5.57.0",
+    "axios": "^1.13.2",
+    "cloudinary": "^2.8.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "form-data": "^4.0.5",
+    "multer": "^2.0.2",
+    "openai": "^6.10.0",
+    "pdf-parse": "^2.4.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
   }
 }

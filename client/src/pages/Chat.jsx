@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";
-import { MessageCircle, MessageCircleCodeIcon, MessageSquare, Pen, Sparkle, Sparkles } from "lucide-react";
+import { MessageCircle, MessageCircleCodeIcon, Sparkles } from "lucide-react";
 import Markdown from "react-markdown";
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
 const Chat = () => {
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([]); 
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const { getToken } = useAuth();
 
@@ -48,72 +48,69 @@ const Chat = () => {
   };
 
   return (
- <div className="h-full overflow-y-scroll p-6 flex flex-col lg:flex-row items-start gap-4 text-slate-700 max-w-5xl mx-auto bg-white rounded-lg shadow-md">
-
-  {/* Left panel: Input form */}
-  <form
-    onSubmit={sendMessage}
-    className="w-full lg:w-1/2 p-4 bg-white rounded-lg border border-gray-200 flex flex-col"  >
-    <div className="flex justify-start mb-2">
-      <label
-        htmlFor="chatInput"
-        className="font-medium text-gray-700">
-        <Sparkles className='w-6 text-[#6f27c8]'/>
-        Your Message
-      </label>
-    </div>
-    <textarea
-      id="chatInput"
-      rows={6}
-      className="w-full p-2 border border-gray-300 rounded-md resize-none mb-4"
-      placeholder="Type your message..."
-      value={input}
-      onChange={(e) => setInput(e.target.value)}
-      disabled={loading}
-      required
-    />
-    <button
-      type="submit"
-     className='w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#8139ce] to-[#220239] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer'
-      disabled={loading}>
-        <MessageCircle className='w-5'/>
-      {loading ? "Sending..." : "Send"}
-    </button>
-  </form>
-
-  {/* Right panel: Messages */}
-  <div className="w-full lg:w-1/2 p-4 bg-white rounded-lg border border-gray-200 min-h-[400px] max-h-[600px] flex flex-col">
-    <div className="flex justify-start mb-4">
-      <h1 className="text-2xl font-bold flex items-center gap-2">
-        Chat with AI 
-        <MessageCircleCodeIcon className="w-6 h-6 text-blue-600" />
-      </h1>
-    </div>
-
-    <div
-      className="flex-1 overflow-y-auto border border-gray-300 rounded-md p-4"
-      style={{ minHeight: "300px" }}>
-      {messages.length === 0 && (
-        <p className="text-gray-500 text-center mt-20">
-          Say hi to the AI by typing on the left!
-        </p>
-      )}
-      {messages.map((msg, idx) => (
-        <div
-          key={idx}
-          className={`mb-3 max-w-[75%] p-3 rounded-lg ${
-            msg.from === "user"
-              ? "bg-blue-100 self-end text-right"
-              : "bg-gray-200 self-start text-left"
-          }`}
-        >
-         <Markdown>{msg.text}</Markdown> 
+    <div className="h-full p-6 flex flex-col lg:flex-row items-start gap-4 text-slate-700 max-w-6xl mx-auto">
+      <form
+        onSubmit={sendMessage}
+        className="w-full lg:w-1/2 p-4 bg-white rounded-lg border border-gray-200 flex flex-col shadow-sm"
+      >
+        <div className="flex items-center gap-2 mb-3">
+          <Sparkles className="w-6 text-[#6f27c8]" />
+          <h2 className="text-lg font-semibold text-slate-700">Your Message</h2>
         </div>
-      ))}
-    </div>
-  </div>
-</div>
 
+        <textarea
+          rows={6}
+          className="w-full p-3 border border-gray-300 rounded-md resize-none mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#8139ce]"
+          placeholder="Type your message..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          disabled={loading}
+          required
+        />
+
+        <button
+          type="submit"
+          className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#8139ce] to-[#220239] text-white px-4 py-2 mt-2 text-sm rounded-lg disabled:opacity-50"
+          disabled={loading}
+        >
+          <MessageCircle className="w-5" />
+          {loading ? "Sending..." : "Send"}
+        </button>
+      </form>
+
+      <div className="w-full lg:w-1/2 p-4 bg-white rounded-lg border border-gray-200 flex flex-col shadow-sm min-h-[400px] max-h-[600px]">
+        <div className="flex items-center gap-2 mb-4">
+          <h1 className="text-xl font-bold flex items-center gap-2">
+            Chat with AI{" "}
+            <MessageCircleCodeIcon className="w-5 h-5 text-blue-600" />
+          </h1>
+        </div>
+
+        <div
+          className="flex-1 overflow-y-auto border border-gray-300 rounded-md p-4 flex flex-col gap-2"
+          style={{ minHeight: "300px" }}
+        >
+          {messages.length === 0 && (
+            <p className="text-gray-400 text-center mt-20">
+              Say hi to the AI by typing on the left!
+            </p>
+          )}
+
+          {messages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`p-3 rounded-md max-w-[75%] text-sm ${
+                msg.from === "user"
+                  ? "bg-blue-50 self-end text-right"
+                  : "bg-gray-100 self-start text-left"
+              }`}
+            >
+              <Markdown>{msg.text}</Markdown>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
 

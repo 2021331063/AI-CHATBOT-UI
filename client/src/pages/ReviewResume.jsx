@@ -1,30 +1,29 @@
 import { FileText, Sparkles } from "lucide-react";
 import React, { useState } from "react";
 import axios from "axios";
-import { useAuth } from "@clerk/clerk-react";
 import toast from "react-hot-toast";
 import Markdown from "react-markdown";
+
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
 const ReviewResume = () => {
   const [input, setInput] = useState(null);
-  const [preview, setPreview] = useState(null); // Added preview state
+  const [preview, setPreview] = useState(null); 
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState("");
-  const { getToken } = useAuth();
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    if (!input) return toast.error("Please upload a file first");
+
     try {
       setLoading(true);
-
       const formData = new FormData();
       formData.append("resume", input);
 
       const { data } = await axios.post("api/ai/resume-review", formData, {
         headers: {
-          Authorization: `Bearer ${await getToken()}`,
           "Content-Type": "multipart/form-data",
         },
       });
@@ -36,8 +35,9 @@ const ReviewResume = () => {
       }
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleFileChange = (e) => {
@@ -97,6 +97,7 @@ const ReviewResume = () => {
 
         <button
           type="submit"
+          disabled={loading}
           className="mt-18 w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#81c3e4] to-[#012e3b] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer"
         >
           {loading ? (
@@ -113,6 +114,7 @@ const ReviewResume = () => {
           <Sparkles className="w-5 h-5 text-[#1b83b7]" />
           <h1 className="text-xl font-semibold">Analysis Results</h1>
         </div>
+
         {!content ? (
           <div className="flex-1 flex justify-center items-center">
             {!input ? (
@@ -120,13 +122,16 @@ const ReviewResume = () => {
                 <FileText className="w-9 h-9 text-[#197682]" />
                 <p>Upload a file and click "Review File" to get started</p>
               </div>
+            ) : loading ? (
+              <div className="flex flex-col items-center text-gray-400">
+                <span className="w-6 h-6 rounded-full border-4 border-t-transparent border-gray-300 animate-spin"></span>
+                <p className="mt-2 text-sm">Analyzing your file...</p>
+              </div>
             ) : null}
           </div>
         ) : (
           <div className="mt-3 h-full overflow-y-scroll text-sm text-slate-600">
-            <div className="reset-tw">
-              <Markdown>{content}</Markdown>
-            </div>
+            <Markdown>{content}</Markdown>
           </div>
         )}
       </div>

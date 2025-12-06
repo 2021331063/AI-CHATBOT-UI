@@ -1,7 +1,6 @@
 import { Edit, Sparkles } from "lucide-react";
 import React, { useState } from "react";
 import axios from "axios";
-import { useAuth } from "@clerk/clerk-react";
 import toast from "react-hot-toast";
 import Markdown from "react-markdown";
 
@@ -18,31 +17,30 @@ const WriteArticle = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState("");
-  const { getToken } = useAuth();
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    if (!input.trim()) return;
+
     try {
       setLoading(true);
       const prompt = `Write an article about ${input} in ${selectedLength.text}`;
 
-      const { data } = await axios.post(
-        "api/ai/generate-article",
-        { prompt, length: selectedLength.length },
-        {
-          headers: { Authorization: `Bearer ${await getToken()}` },
-        }
-      );
+      const { data } = await axios.post("/api/ai/generate-article", {
+        prompt,
+        length: selectedLength.length,
+      });
 
       if (data.success) {
         setContent(data.content);
       } else {
-        toast.error(data.message);
+        toast.error(data.message || "Something went wrong");
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
