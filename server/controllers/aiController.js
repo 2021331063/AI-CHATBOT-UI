@@ -35,6 +35,9 @@ export async function extractPdfText(buffer) {
 }
 
 
+import sql from "../configs/db.js";
+// import OpenAI from "openai";
+
 export const generateArticle = async (req, res) => {
   try {
     const { prompt, length } = req.body;
@@ -47,12 +50,21 @@ export const generateArticle = async (req, res) => {
     });
 
     const content = response.choices[0].message.content;
-    res.json({ success: true, content });
+
+    // Save to database
+    const result = await sql`
+      INSERT INTO creations (prompt, content, type)
+      VALUES (${prompt}, ${content}, 'article')
+      RETURNING *;
+    `;
+
+    res.json({ success: true, content, dbEntry: result[0] });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
   }
 };
+
 
 export const generateBlogTitle = async (req, res) => {
   try {
@@ -66,12 +78,20 @@ export const generateBlogTitle = async (req, res) => {
     });
 
     const content = response.choices[0].message.content;
-    res.json({ success: true, content });
+
+    const result = await sql`
+      INSERT INTO creations (prompt, content, type)
+      VALUES (${prompt}, ${content}, 'blog-title')
+      RETURNING *;
+    `;
+
+    res.json({ success: true, content, dbEntry: result[0] });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
   }
 };
+
 
 export const chatWithAI = async (req, res) => {
   try {
@@ -87,7 +107,15 @@ export const chatWithAI = async (req, res) => {
     });
 
     const reply = response.choices[0].message.content;
-    res.json({ success: true, reply });
+
+    // Save to database
+    const result = await sql`
+      INSERT INTO creations (prompt, content, type)
+      VALUES (${message}, ${reply}, 'chat')
+      RETURNING *;
+    `;
+
+    res.json({ success: true, reply, dbEntry: result[0] });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
@@ -99,6 +127,9 @@ export const chatWithAI = async (req, res) => {
 export const removeImageBackground = async (req, res) => {
   try {
     const image = req.file;
+    if (!image)
+      return res.json({ success: false, message: "No image uploaded" });
+
     const { secure_url } = await cloudinary.uploader.upload(image.path, {
       transformation: [
         {
@@ -109,17 +140,30 @@ export const removeImageBackground = async (req, res) => {
     });
 
     fs.unlinkSync(image.path);
-    res.json({ success: true, content: secure_url });
+
+    const result = await sql`
+      INSERT INTO creations (prompt, content, type)
+      VALUES ('Remove image background', ${secure_url}, 'image-background')
+      RETURNING *;
+    `;
+
+    res.json({ success: true, content: secure_url, dbEntry: result[0] });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
   }
 };
 
+
+
+
 export const removeImageObject = async (req, res) => {
   try {
     const { object } = req.body;
     const image = req.file;
+    if (!image)
+      return res.json({ success: false, message: "No image uploaded" });
+
     const { public_id } = await cloudinary.uploader.upload(image.path);
 
     const imageUrl = cloudinary.url(public_id, {
@@ -128,12 +172,22 @@ export const removeImageObject = async (req, res) => {
     });
 
     fs.unlinkSync(image.path);
-    res.json({ success: true, content: imageUrl });
+
+    const result = await sql`
+      INSERT INTO creations (prompt, content, type)
+      VALUES (${`Remove object: ${object}`}, ${imageUrl}, 'image-object')
+      RETURNING *;
+    `;
+
+    res.json({ success: true, content: imageUrl, dbEntry: result[0] });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
   }
 };
+
+
+
 
 export const resumeReview = async (req, res) => {
   try {
@@ -145,8 +199,8 @@ export const resumeReview = async (req, res) => {
       return res.json({ success: false, message: "Uploaded PDF is empty" });
 
     const text = await extractPdfText(buffer);
-
     const prompt = `Review the following resume:\n\n${text}`;
+
     const response = await AI.chat.completions.create({
       model: "gemini-2.0-flash",
       messages: [{ role: "user", content: prompt }],
@@ -154,9 +208,29 @@ export const resumeReview = async (req, res) => {
       max_tokens: 1000,
     });
 
-    res.json({ success: true, content: response.choices[0].message.content });
+    const content = response.choices[0].message.content;
+
+    const result = await sql`
+      INSERT INTO creations (prompt, content, type)
+      VALUES (${prompt}, ${content}, 'resume-review')
+      RETURNING *;
+    `;
+
+    res.json({ success: true, content, dbEntry: result[0] });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
+  }
+};
+
+
+
+export const getCreations = async (req, res) => {
+  try {
+    const result = await sql`SELECT * FROM creations ORDER BY id DESC`;
+    res.json({ success: true, data: result });
+  } catch (error) {
+    console.error("Get Creations Error:", error);
+    res.json({ success: false, message: "Failed to load creations" });
   }
 };
