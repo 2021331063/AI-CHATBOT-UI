@@ -114,7 +114,6 @@ const ReviewResume = () => {
           <Sparkles className="w-5 h-5 text-[#1b83b7]" />
           <h1 className="text-xl font-semibold">Analysis Results</h1>
         </div>
-
         {!content ? (
           <div className="flex-1 flex justify-center items-center">
             {!input ? (
