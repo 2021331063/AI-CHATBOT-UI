@@ -8,6 +8,7 @@ import {
   removeImageObject,
   resumeReview,
   chatWithAI,
+  getCreations,
 } from "../controllers/aiController.js";
 
 
@@ -28,6 +29,6 @@ router.post(
 );
 router.post("/resume-review", uploadPdf.single("resume"), resumeReview);
 router.post("/chat", chatWithAI);
-
+router.get("/creations", getCreations);
 
 export default router;
