@@ -3,7 +3,6 @@ import { uploadImage, uploadPdf } from "../configs/multer.js";
 import {
   generateArticle,
   generateBlogTitle,
-  // generateImage,
   removeImageBackground,
   removeImageObject,
   resumeReview,

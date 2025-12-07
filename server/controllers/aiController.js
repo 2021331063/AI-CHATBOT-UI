@@ -1,27 +1,14 @@
 import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
-
-import dommatrix from "dommatrix";
-const { DOMMatrix } = dommatrix;
-global.DOMMatrix = DOMMatrix;
-import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
-
 import streamifier from "streamifier";
 import axios from "axios";
 import sql from "../configs/db.js";
-
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const pdfParse = require("pdf-parse");
 
 export async function extractPdfText(buffer) {
-  const loadingTask = getDocument({ data: new Uint8Array(buffer) });
-  const pdf = await loadingTask.promise;
-
-  let text = "";
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const content = await page.getTextContent();
-    text += content.items.map((i) => i.str).join(" ") + "\n";
-  }
-  return text;
+  const data = await pdfParse(buffer);
+  return data.text;
 }
 
 
@@ -50,8 +37,6 @@ export async function askGemini(message) {
 
 
 
-
-
 export const generateArticle = async (req, res) => {
   try {
     const { prompt, length } = req.body;
@@ -71,6 +56,7 @@ export const generateArticle = async (req, res) => {
 };
 
 
+
 export const generateBlogTitle = async (req, res) => {
   try {
     const { prompt } = req.body;
@@ -88,6 +74,8 @@ export const generateBlogTitle = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+
 
 export const chatWithAI = async (req, res) => {
   try {
@@ -110,6 +98,8 @@ export const chatWithAI = async (req, res) => {
   }
 };
 
+
+
 export const resumeReview = async (req, res) => {
   try {
     if (!req.file)
@@ -121,7 +111,6 @@ export const resumeReview = async (req, res) => {
 
     const text = await extractPdfText(buffer);
     const prompt = `Review the following resume:\n\n${text}`;
-
     const content = await askGemini(prompt, 1000);
 
     const result = await sql`
@@ -132,13 +121,10 @@ export const resumeReview = async (req, res) => {
 
     res.json({ success: true, content, dbEntry: result[0] });
   } catch (error) {
-    console.error(error);
+    console.error("Resume Review Error:", error.message);
     res.json({ success: false, message: error.message });
   }
 };
-
-
-
 
 
 
@@ -173,8 +159,6 @@ export const removeImageBackground = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
-
-
 
 
 
