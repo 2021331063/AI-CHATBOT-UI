@@ -6,13 +6,13 @@ import { useUser, useClerk } from "@clerk/clerk-react";
 const AiTools = () => {
   const navigate = useNavigate();
   const { user } = useUser();
-  const { openSignIn } = useClerk(); // use the same modal function as Navbar
+  const { openSignIn } = useClerk(); 
 
   const handleClick = (path) => {
     if (user) {
-      navigate(path); // logged in → navigate to tool
+      navigate(path); 
     } else {
-      openSignIn(); // logged out → open Clerk login modal
+      openSignIn(); 
     }
   };
 
