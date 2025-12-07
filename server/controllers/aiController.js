@@ -6,6 +6,7 @@ const { DOMMatrix } = dommatrix;
 global.DOMMatrix = DOMMatrix;
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 
+import streamifier from "streamifier";
 import axios from "axios";
 import sql from "../configs/db.js";
 
@@ -136,15 +137,7 @@ export const resumeReview = async (req, res) => {
   }
 };
 
-export const getCreations = async (req, res) => {
-  try {
-    const result = await sql`SELECT * FROM creations ORDER BY id DESC`;
-    res.json({ success: true, data: result });
-  } catch (error) {
-    console.error("Get Creations Error:", error);
-    res.json({ success: false, message: "Failed to load creations" });
-  }
-};
+
 
 
 
@@ -155,29 +148,33 @@ export const removeImageBackground = async (req, res) => {
     if (!image)
       return res.json({ success: false, message: "No image uploaded" });
 
-    const { secure_url } = await cloudinary.uploader.upload(image.path, {
-      transformation: [
-        {
-          effect: "background_removal",
-          background_removal: "remove_the_background",
-        },
-      ],
+    const result = await new Promise((resolve, reject) => {
+      const upload_stream = cloudinary.uploader.upload_stream(
+        { transformation: [{ effect: "background_removal" }] },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      streamifier.createReadStream(image.buffer).pipe(upload_stream);
     });
 
-    fs.unlinkSync(image.path);
+    const secure_url = result.secure_url;
 
-    const result = await sql`
+    const dbResult = await sql`
       INSERT INTO creations (prompt, content, type)
       VALUES ('Remove image background', ${secure_url}, 'image-background')
       RETURNING *;
     `;
 
-    res.json({ success: true, content: secure_url, dbEntry: result[0] });
+    res.json({ success: true, content: secure_url, dbEntry: dbResult[0] });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
   }
 };
+
+
 
 
 
@@ -189,25 +186,46 @@ export const removeImageObject = async (req, res) => {
     if (!image)
       return res.json({ success: false, message: "No image uploaded" });
 
-    const { public_id } = await cloudinary.uploader.upload(image.path);
+    const uploadStream = () =>
+      new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { resource_type: "image" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        streamifier.createReadStream(image.buffer).pipe(stream);
+      });
 
-    const imageUrl = cloudinary.url(public_id, {
+    const result = await uploadStream();
+
+    
+    const imageUrl = cloudinary.url(result.public_id, {
       transformation: [{ effect: `gen_remove:${object}` }],
       resource_type: "image",
     });
 
-    fs.unlinkSync(image.path);
-
-    const result = await sql`
+    
+    const dbEntry = await sql`
       INSERT INTO creations (prompt, content, type)
       VALUES (${`Remove object: ${object}`}, ${imageUrl}, 'image-object')
       RETURNING *;
     `;
 
-    res.json({ success: true, content: imageUrl, dbEntry: result[0] });
+    res.json({ success: true, content: imageUrl, dbEntry: dbEntry[0] });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
   }
 };
 
+export const getCreations = async (req, res) => {
+  try {
+    const result = await sql`SELECT * FROM creations ORDER BY id DESC`;
+    res.json({ success: true, data: result });
+  } catch (error) {
+    console.error("Get Creations Error:", error);
+    res.json({ success: false, message: "Failed to load creations" });
+  }
+};
