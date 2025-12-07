@@ -3,7 +3,6 @@ import cors from "cors";
 import "dotenv/config";
 import aiRouter from "./routes/aiRoutes.js";
 import connectCloudinary from "./configs/cloudinary.js";
-import fs from "fs";
 
 const app = express();
 
