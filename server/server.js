@@ -5,11 +5,6 @@ import aiRouter from "./routes/aiRoutes.js";
 import connectCloudinary from "./configs/cloudinary.js";
 import fs from "fs";
 
-const uploadDir = "./uploads";
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
 const app = express();
 
 await connectCloudinary();
