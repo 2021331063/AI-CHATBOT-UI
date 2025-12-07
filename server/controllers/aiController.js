@@ -2,19 +2,17 @@ import { v2 as cloudinary } from "cloudinary";
 import streamifier from "streamifier";
 import axios from "axios";
 import sql from "../configs/db.js";
-import pdfExtract from "pdf-extraction";
+import pdfExtraction from "pdf-extraction";
 
 export async function extractPdfText(buffer) {
   try {
-    const data = await pdfExtract(buffer);
+    const data = await pdfExtraction(buffer); // <-- FIXED
     return data.text || "";
   } catch (error) {
     console.error("PDF Extraction Error:", error);
     throw new Error("Failed to read the PDF file");
   }
 }
-
-
 
 
 
