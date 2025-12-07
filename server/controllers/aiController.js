@@ -2,14 +2,20 @@ import { v2 as cloudinary } from "cloudinary";
 import streamifier from "streamifier";
 import axios from "axios";
 import sql from "../configs/db.js";
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const pdfParse = require("pdf-parse");
+import pdfExtract from "pdf-extraction";
 
 export async function extractPdfText(buffer) {
-  const data = await pdfParse(buffer);
-  return data.text;
+  try {
+    const data = await pdfExtract(buffer);
+    return data.text || "";
+  } catch (error) {
+    console.error("PDF Extraction Error:", error);
+    throw new Error("Failed to read the PDF file");
+  }
 }
+
+
+
 
 
 export async function askGemini(message) {
