@@ -16,7 +16,6 @@ const router = express.Router();
 
 router.post("/generate-article", generateArticle);
 router.post("/generate-blog-title", generateBlogTitle);
-// router.post("/generate-image", generateImage);
 router.post(
   "/remove-image-background",
   uploadImage.single("image"),

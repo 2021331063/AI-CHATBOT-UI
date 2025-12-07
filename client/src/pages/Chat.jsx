@@ -29,6 +29,8 @@ const Chat = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
+      console.log("AI response:", data);
+
       if (data.success) {
         const botMessage = { from: "bot", text: data.reply };
         setMessages((prev) => [...prev, botMessage]);
